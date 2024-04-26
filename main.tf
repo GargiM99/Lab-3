@@ -1,35 +1,64 @@
-provider "aws" {
-  region                   = "us-east-1"
-  shared_credentials_files = ["./credentials.txt"]
+#SG for Blue
+
+resource "aws_security_group" "Lab3_BlueSG" {
+  name        = "Lab3_BlueSG"
+  vpc_id      = var.VPC-blue_id_Lab3
+  description = "Security Group that is applied to Blue VPC, allows HTTP & SSH inbound traffic"
+
+  #Inbound Rules
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  #Outbound Rules
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
-#Blue
-resource "aws_lb" "blue_lb_Lab3" {
-  subnets = [
-    module.VPC.blue-1_id, 
-    module.VPC.blue-2_id, 
-    module.VPC.blue-3_id
-  ]
-  security_groups = [module.SecurityGroups.SG-blue_id_Lab3]
-}
 
 
-#Green
-resource "aws_lb" "green_lb_Lab3" {
-  subnets = [
-    module.VPC.green-1_id, 
-    module.VPC.green-2_id, 
-    module.VPC.green-3_id
-  ]
-  security_groups = [module.SecurityGroups.SG-green_id_Lab3]
-}
 
-module "VPC" {
-  source = "./VPC Module"
-}
+#SG for Green
 
-module "SecurityGroups" {
-  source       = "./SG Module"
-  VPC-blue_id_Lab3  = module.VPC.VPC-blue_id_Lab3
-  VPC-green_id_Lab3 = module.VPC.VPC-green_id_Lab3
+resource "aws_security_group" "Lab3_GreenSG" {
+  name        = "Lab3_GreenSG"
+  vpc_id      = var.VPC-green_id_Lab3
+  description = "Security Group that is applied to Green VPC, allows HTTP & SSH inbound traffic"
+
+  #Inbound Rules
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  #Outbound Rules
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
